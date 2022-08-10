@@ -6,9 +6,9 @@
     #include <netinet/in.h>
         #include <netinet/ip.h> //
 
-#include <sys/socket.h> // man 3 socket
-    #include <netinet/in.h> // man 3 socket
-        #include <.h> // man 3 socket
+#include <sys/socket.h> // 
+    #include <netinet/in.h> 
+        #include <.h> 
 
 // 可以写宏来替换下面的端口PORT和地址IP
 
@@ -35,7 +35,7 @@ int main(int argc,const char *argv[])
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 #if 1 // 写法 1
     struct sockaddr_in ser_addr; // 保存服务器的 info
-    menset(&ser_addr, 0 , sizeof(ser_addr));
+    memset(&ser_addr, 0 , sizeof(ser_addr));
     ser_addr.sin_family     = PF_INET; // IPV4
     ser_addr.sin_port       = htons(6666); //端口号 1024-49151
     ser_addr.sin_addr.s_addr= inet_addr("127.0.0.1"); // 转化 ip
@@ -43,18 +43,24 @@ int main(int argc,const char *argv[])
     struct sockaddr_in ser_addr = 
     {
         .sin_family     = PF_INET,
-        .sin_port       = htons(6666),
-        .sin_addr.s_addr= inet_addr("127.0.0.1")
+        .sin_port       = htons(6666), // SERV_PORT
+        .sin_addr.s_addr= inet_addr("127.0.0.1") // SERV_IP
     };
 #endif
-
-
 
 
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //     绑定 IP 和端口等信息
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
+    int ret = bind(listenfd, struct sockaddr *) &ser_addr, sizeof(ser_addr);
+    if(-1 == ret)
+    {
+        perror("bind");
+        return -1;
+    }
+    printf("bind is OK\n");
+    
+    
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //           建立监听
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
