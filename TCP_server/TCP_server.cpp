@@ -2,18 +2,18 @@
 #include <string.h>
 #include <sys/socket.h> // man 3 socket
 
-#include <sys/socket.h> // man 3 socket 
     #include <netinet/in.h>
-        #include <netinet/ip.h> //
+        #include <netinet/ip.h> 
 
-#include <sys/socket.h> // 
-    #include <netinet/in.h> 
+ 
 
 #include <sys/types.h>
 #include <arpa/inet.h>
 
 #include <unistd.h>
 
+// #define SERV_IP ""
+// #define SERV_ ""
 
 // 可以写宏来替换下面的端口PORT和地址IP
 
@@ -108,11 +108,29 @@ int main(int argc,const char *argv[])
         }
         printf("recv:%s\n",recvbuf);
         
+        // 指定完成指令
+        if(strncmp(recvbuf,"sl",2) == 0)
+        {
+            system("sl");
+        }
+        else if(strncmp(recvbuf,"goo",3) == 0)
+        {
+            myprint("hello world\n");
+        }
     }
 
 
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //          关闭套接字
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    close(connfd);
+    close(listenfd);
+    return 0;
+}
 
+void myprint(char *s);
+
+void myprint(char *s)
+{
+    printf("%s",s);
 }
