@@ -8,7 +8,10 @@
 
 #include <sys/socket.h> // 
     #include <netinet/in.h> 
-        #include <.h> 
+
+#include <sys/types.h>
+#include <arpa/inet.h>
+
 
 // 可以写宏来替换下面的端口PORT和地址IP
 
@@ -47,12 +50,10 @@ int main(int argc,const char *argv[])
         .sin_addr.s_addr= inet_addr("127.0.0.1") // SERV_IP
     };
 #endif
-
-
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //     绑定 IP 和端口等信息
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    int ret = bind(listenfd, struct sockaddr *) &ser_addr, sizeof(ser_addr);
+    int ret = bind(listenfd, (struct sockaddr *) &ser_addr, sizeof(ser_addr));
     if(-1 == ret)
     {
         perror("bind");
