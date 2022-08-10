@@ -1,25 +1,26 @@
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h> // man 3 socket
-
-    #include <netinet/in.h>
-        #include <netinet/ip.h> 
-
- 
-
-#include <sys/types.h>
+#include <sys/socket.h> //man 3 socket 
+#include <sys/socket.h>  //man 7 ip 
+#include <netinet/in.h> 
+#include <netinet/ip.h> /* superset of previous */
+#include <sys/socket.h>   // man  3 inet_addr
+#include <netinet/in.h>
 #include <arpa/inet.h>
-
 #include <unistd.h>
+#include <stdlib.h>
 
 // #define SERV_IP ""
 // #define SERV_ ""
 
 // 可以写宏来替换下面的端口PORT和地址IP
 
+void myprint(char *s);
+
 
 int main(int argc,const char *argv[])
 {
+    char recvbuf[1024] = {0};
     int listenfd; // 保存 socket 返回值 作为 监听套接字
     int connfd; // 用于保存 accept 处理后的返回值 作为通信套接字
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -49,6 +50,7 @@ int main(int argc,const char *argv[])
     {
         .sin_family     = PF_INET,
         .sin_port       = htons(6666), // SERV_PORT
+        // .cpp 文件会报错，建议创建.c文件
         .sin_addr.s_addr= inet_addr("127.0.0.1") // SERV_IP
     };
 #endif
@@ -128,7 +130,6 @@ int main(int argc,const char *argv[])
     return 0;
 }
 
-void myprint(char *s);
 
 void myprint(char *s)
 {
