@@ -11,12 +11,25 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-// #define SERV_IP ""
-// #define SERV_ ""
+// #define SERV_IP "0.0.0.0" // INADDR_ANY
+// #define SERV_ "6666"
 
 // 可以写宏来替换下面的端口PORT和地址IP
 
 void myprint(char *s);
+
+
+int server_init(char *ip,short port, int backlog);
+int server_init(char *ip,short port, int backlog)
+{
+    // 创建套接字
+    // 填充 ip 等信息
+    // bind
+    // listen
+
+
+    return listenfd;
+}
 
 
 int main(int argc,const char *argv[])
@@ -24,6 +37,8 @@ int main(int argc,const char *argv[])
     char recvbuf[1024] = {0};
     int listenfd; // 保存 socket 返回值 作为 监听套接字
     int connfd; // 用于保存 accept 处理后的返回值 作为通信套接字
+
+    struct sockaddr_in_caddr ; // 定义一个结构体变量来保存 client 的ip等信息
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //         创建套接字
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -94,14 +109,26 @@ int main(int argc,const char *argv[])
     // 加了一个 while(1) 循环
     while (1)
     {
+#if 0
         connfd = accept(listenfd, NULL, NULL); // 不关心客户端的 IP 和端口
+#else
+        // 优化 3
+        // 关心客户端的 IP 和端口
+        struct sockaddr_in caddr; // 定义一个结构体变量来保存 client 的ip等信息
+        memset(&caddr, 0, sizeof(caddr));
+        socklen_t clen = sizeof(caddr); // socklen_t -> int
+        connfd = accept(listenfd, (struct sockaddr *)&caddr, &clen);
         if (-1 == connfd)
         {
             perror("accept");
             return -1;
         }
+        printf("客户端(%s:%d)链接成功！\n",inet_ntoa(caddr.sin_addr/*这有问题？*/),ntohs(caddr.sin_port));
+#endif
+        
         printf("connfd = %d\n", connfd);
-        printf("客户端链接成功！\n"); // 模拟发起客户端：nc 127.0.0.1 6666
+        
+         // 模拟发起客户端：nc 127.0.0.1 6666
 
         // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         //           正常通信
@@ -148,6 +175,7 @@ int main(int argc,const char *argv[])
         //          关闭套接字
         // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         close(connfd);
+
     }
     close(listenfd); // 关闭监听套接字
     return 0;
