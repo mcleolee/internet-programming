@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 // #define SERV_IP ""
 // #define SERV_ ""
@@ -54,6 +55,12 @@ int main(int argc,const char *argv[])
         .sin_addr.s_addr= inet_addr("127.0.0.1") // SERV_IP
     };
 #endif
+
+    // 优化 2
+    // 设置套接字重用
+    int opt = 1;
+    setsocketopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //     绑定 IP 和端口等信息
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -82,52 +89,67 @@ int main(int argc,const char *argv[])
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     // 相当于前台
     // 当 accept 处理之后,监听套接字转接通信套接字
-    connfd = accept(listenfd, NULL,NULL); // 不关心客户端的 IP 和端口
-    if(-1 == connfd)
+    // 优化 1
+    // 客户端退出，服务器继续保持监听
+    // 加了一个 while(1) 循环
+    while (1)
     {
-        perror("accept");
-        return -1;
-    }
-    printf("connfd = %d\n",connfd);
-    printf("客户端链接成功！\n"); // 模拟发起客户端：nc 127.0.0.1 6666
-
-    // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //           正常通信
-    // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    while(1)
-    {
-        int count = -1;
-        memset(recvbuf, 0 , sizeof(recvbuf));
-        count = read(connfd, recvbuf, sizeof(recvbuf));
-        if(-1 == count)
+        connfd = accept(listenfd, NULL, NULL); // 不关心客户端的 IP 和端口
+        if (-1 == connfd)
         {
-            perror("read");
+            perror("accept");
             return -1;
         }
-        else if (0 == count)
+        printf("connfd = %d\n", connfd);
+        printf("客户端链接成功！\n"); // 模拟发起客户端：nc 127.0.0.1 6666
+
+        // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        //           正常通信
+        // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        while (1)
         {
-            printf("client had quit!\n");
-            break;
+            int count = -1;
+            memset(recvbuf, 0, sizeof(recvbuf));
+            count = read(connfd, recvbuf, sizeof(recvbuf));
+            if (-1 == count)
+            {
+                perror("read");
+                return -1;
+            }
+            else if (0 == count)
+            {
+                printf("client had quit!\n");
+                break;
+            }
+            // 正常通信
+            printf("recv:%s\n", recvbuf);
+
+            // 指定完成指令
+            if (strncmp(recvbuf, "sl", 2) == 0)
+            {
+                system("sl");
+            }
+            else if (strncmp(recvbuf, "goo", 3) == 0)
+            {
+                myprint("hello world\n");
+            }
+            
+            // 将接收到的数据转换成大写
+            for(int i=0;i<count; i++)
+            {
+                // 将 recvbuf 里面的字母逐个变为大写再送回 recvbuf
+                recvbuf[i] = toupper(recvbuf[i]);
+            }
+            write(connfd, recvbuf, count);
+
         }
-        printf("recv:%s\n",recvbuf);
-        
-        // 指定完成指令
-        if(strncmp(recvbuf,"sl",2) == 0)
-        {
-            system("sl");
-        }
-        else if(strncmp(recvbuf,"goo",3) == 0)
-        {
-            myprint("hello world\n");
-        }
+
+        // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        //          关闭套接字
+        // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        close(connfd);
     }
-
-
-    // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //          关闭套接字
-    // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    close(connfd);
-    close(listenfd);
+    close(listenfd); // 关闭监听套接字
     return 0;
 }
 
