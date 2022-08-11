@@ -20,6 +20,7 @@ void myprint(char *s);
 
 
 int server_init(char *ip,short port, int backlog);
+// 把 server 的初始化封装进这个函数
 int server_init(char *ip,short port, int backlog)
 {
     // 创建套接字
