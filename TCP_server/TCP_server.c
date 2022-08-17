@@ -12,10 +12,11 @@
 #include <ctype.h>
 
 
-// #define SERV_IP "0.0.0.0" // INADDR_ANY
-// #define SERV_ "6666"
+#define SERV_IP "0.0.0.0" // INADDR_ANY
+#define SERV_ "6666"
 
 // 可以写宏来替换下面的端口PORT和地址IP
+#define SIZE 1024
 
 void myprint(char *s);
 
@@ -36,11 +37,12 @@ int server_init(char *ip,short port, int backlog)
 
 int main(int argc,const char *argv[])
 {
-    char recvbuf[1024] = {0};
+    char recvbuf[SIZE] = {0};
     int listenfd; // 保存 socket 返回值 作为 监听套接字
     int connfd; // 用于保存 accept 处理后的返回值 作为通信套接字
 
-    struct sockaddr_in_caddr ; // 定义一个结构体变量来保存 client 的ip等信息
+    // struct sockaddr_in_caddr ; // 定义一个结构体变量来保存 client 的ip等信息
+    
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //         创建套接字
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -53,7 +55,7 @@ int main(int argc,const char *argv[])
         perror("socket");
         return -1;
     }
-    printf("socket is OK\n");
+    printf("socket %d OK\n",listenfd);
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //    填充ip,端口,协议等信息
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -70,13 +72,19 @@ int main(int argc,const char *argv[])
         .sin_port       = htons(6666), // SERV_PORT
         // .cpp 文件会报错，建议创建.c文件
         .sin_addr.s_addr= inet_addr("127.0.0.1") // SERV_IP
+        //.sin_addr.s_addr = inet_addr(argv[1])   //用命令行参数  运行时 输入ip ： ./a.out  127.0.0.1 
     };
 #endif
 
     // 优化 2
     // 设置套接字重用
     int opt = 1;
-    setsocketopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    int m = setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    if(-1 == m)
+    {
+        perror("setsockopt");
+        return -1;
+    }
 
     // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //     绑定 IP 和端口等信息
