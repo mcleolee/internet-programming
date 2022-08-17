@@ -5,7 +5,7 @@
       "includePath": [
         "${workspaceFolder}/**"
       ],
-      "compilerPath": "J:/environment/mingw/mingw64/bin/gcc.exe",
+      "compilerPath": "/usr/bin/clang", // windows 是 J:/environment/mingw/mingw64/bin/gcc.exe
       "cStandard": "${default}",
       "cppStandard": "${default}",
       "intelliSenseMode": "windows-gcc-x64",

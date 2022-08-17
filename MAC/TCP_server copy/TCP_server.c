@@ -30,7 +30,7 @@ int server_init(char *ip,short port, int backlog)
     // listen
 
 
-    // return listenfd;
+    return listenfd;
 }
 
 
