@@ -13,12 +13,11 @@
 
 
 #define SERV_IP "0.0.0.0" // INADDR_ANY
-#define SERV_ "6666"
+#define SERV_PORT "6666"
 
 // 可以写宏来替换下面的端口PORT和地址IP
 #define SIZE 1024
 
-void myprint(char *s);
 
 
 int server_init(char *ip,short port, int backlog);
@@ -192,6 +191,8 @@ int main(int argc,const char *argv[])
 }
 
 
+
+void myprint(char *s);
 void myprint(char *s)
 {
     printf("%s",s);
