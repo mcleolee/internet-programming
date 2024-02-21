@@ -107,6 +107,7 @@ int errorIfValueLessThan_0(const int value ,const char *msg){
     }else return value;
 }
 
+// 这函数有他妈的问题
 int quitIfTypeQuit(){
     char buffer[64] = {0};
     fgets(buffer, 64, stdin);
@@ -126,7 +127,7 @@ int isQuit(char buffer[]){
 
 
 
-//1. 创建套接字
+// 1. 创建套接字
 int createSocket(){
     // socket 函数返回值应该是3，因为0、1、2都被占用了
     int sockfd = socket(AF_INET, SOCK_STREAM, 0); //保存 socket 返回值 作为 监听套接字
@@ -147,20 +148,53 @@ void bindSocketToServer(int sockfd){
 //3. 设置监听套接字
 void startListeningOnSocket(int sockfd){
     int listenReturn = listen(sockfd, 5);
-    if(errorIfValueLessThan_0(listenReturn, "Failed to listen") != -1)
+    if(errorIfValueLessThan_0(listenReturn, "Failed to listen") != -1){
     cout<<"- Listen successful -\n";
+    printClientIP(clientAddr);
+    }
 }
 
-//4.5 accept
-void acceptConnect(int &connectfd, int sockfd){
+//3.5 客户端请求链接 -- CLIENT  
+//connect
+void clientConnect(int sockfd){
+    int connectReturn = connect(sockfd, (struct sockaddr*)&serverAddr, serverAddrLength);
+    if(errorIfValueLessThan_0(connectReturn, "Failed to connect") != -1){
+    printMessage("- connect successful -\n");
+    printServerIP(serverAddr);
+    }
+}
+
+//4. 接受客户端链接
+void acceptClientConnect(int &connectfd, int sockfd){
     connectfd = accept(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLength);
     if(errorIfValueLessThan_0(connectfd, "Failed to connect and create a new connectfd") != -1)
     {cout<<"- Client connected -\n";
     printClientIP(clientAddr);}
 }
 
+//4.5 客户端数据发送 -- CLIENT
+void clientWrite(int sockfd){
+    char buffer[64] = {0};
+    while(1){
+        fgets(buffer, 64, stdin);
+        buffer[strlen(buffer) - 1] = '\0'; // 把倒数第一个换成换行符？
+
+        if(isQuit(buffer)) break;
+
+        int writeReturn = write(sockfd, buffer, strlen(buffer));
+        if(writeReturn < 0){
+            perror("Failed to write");
+            cerr << "Error code: " << errno << endl;
+            // return -1;
+        }else if(writeReturn == 0){
+            cout<< "- write NULL, quiting now -\n";
+            break;
+        }else cout<< "- write successful! -\n";
+    }
+}
+
 //5. 数据接受和发送 read
-int readClientMessage(int connectfd){
+void readClientMessage(int connectfd){
         char buffer[64];
         while(1){
             memset(buffer, 0, sizeof(buffer));
@@ -169,15 +203,15 @@ int readClientMessage(int connectfd){
             if(readReturn < 0){
                 perror("Failed to read");
                 cerr << "Error code: " << errno << endl;
-                return -1;
+                // return -1;
             }else if(readReturn == 0){
                 printMessage("\n-- The client disconnected! --");
                 printClientIP(clientAddr);
                 break;
             }
-            
+
             cout << "- read successful -\n"<<"recieved message ("<< readReturn <<" bytes):\n"<<buffer<<"\n\n";
-            return 0;
+            
 
             // if(errorIfValueLessThan_0(readReturn, "Failed to read buffer") != -1)
             // cout << "- read successful -\n"<<"recieved message ("<< readReturn <<" bytes):\n"<<buffer<<"\n\n";
@@ -187,8 +221,6 @@ int readClientMessage(int connectfd){
             //     break;
             // }
         }
-
-
 }
 
 
