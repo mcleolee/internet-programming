@@ -33,44 +33,49 @@
 
 using namespace std;
 
-// ==================================================================
+// ================================================================
+// ===================  声明  ======================================
+// ================================================================
 
 
-
-// in client.cpp
+socklen_t serverAddrLength;
+socklen_t clientAddrLength;
 extern struct sockaddr_in serverAddr;
+extern struct sockaddr_in clientAddr;
 
-// struct sockaddr_in serverAddr;
-//     {
-//         serverAddr.sin_family = AF_INET;
-//         serverAddr.sin_port   = htons(SERV_PORT);
-//         serverAddr.sin_addr.s_addr = inet_addr(INET_IP);
-//     };
 
+// ==================================================================
+// ===================  结构体  ======================================
+// ==================================================================
 
 // in server.cpp
 struct sockaddr_in serverAddr;
 
-void initializeServerAddr(struct sockaddr_in& addr){
+void initializeServerAddr(struct sockaddr_in& addr, socklen_t &serverAddrLength){
     // sin -> socket internet
     addr.sin_family = AF_INET; // IPV4
     addr.sin_port = htons(SERV_PORT); // 定义端口号8888，已转换主机字节序为网络字节序
-    serverAddr.sin_addr.s_addr = inet_addr(INET_IP); //设置本机IP，已把地址转换为整数
+    addr.sin_addr.s_addr = inet_addr(INET_IP); //设置本机IP，已把地址转换为整数
     // addr.sin_addr.s_addr = htonl(INADDR_ANY); // 服务器将绑定到所有可用的网络接口上，而不是一个特定的IP地址
+    serverAddrLength = sizeof(addr);
 }
 
 // int server.cpp
-extern struct sockaddr_in clientAddr;
 
 struct sockaddr_in clientAddr;
 
-void initializeClientAddr(struct sockaddr_in& addr){
+void initializeClientAddr(struct sockaddr_in& addr, socklen_t &clientAddrLength){
         memset(&addr, 0, sizeof(addr));
+        clientAddrLength = sizeof(addr);
 }
-// ==================================================================
 
 
-class Tool{
+// ================================================================
+// ===================  函数  ======================================
+// ================================================================
+
+
+class tool{
 public:
     static void delay(int sec){this_thread::sleep_for(chrono::seconds(sec));} // delay 1s}
     static void timeExist(){static int temp;cout << "\ntime ticks "<< temp << "\n";temp++;} // 时间流动的证据 
@@ -85,7 +90,6 @@ int errorIfValueLessThan_0(const int value ,const char *msg){
         return -1;
     }else return value;
 }
-
 
 int createSocket(){
     // 创建套接字
@@ -116,9 +120,9 @@ int isQuit(char buffer[]){
 }
 
 
-// void printClientIP(){
+// void printClientIP(in_addr addr){
 //     // 客户端IP和PORT是不是不太对
-//     "Client IP is "<<inet_ntoa(serverAddr.sin_addr)<<" / "<<SERV_PORT<<endl<<endl;; 
+//     "Client IP is "<<inet_ntoa(addr)<<" / "<<SERV_PORT<<endl<<endl;; 
 // }
 
 

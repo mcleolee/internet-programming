@@ -2,12 +2,17 @@
 
 using namespace std;
 
+extern socklen_t serverAddrLength;
+extern socklen_t clientAddrLength;
+extern struct sockaddr_in serverAddr;
+extern struct sockaddr_in clientAddr;
+
 int main(){
-    Tool::clear();
+    tool::clear();
     int sockfd = createSocket();
 //connect
-    initializeServerAddr(serverAddr);
-    int serverAddrLength = sizeof(serverAddr);
+    initializeServerAddr(serverAddr, serverAddrLength);
+    // socklen_t serverAddrLength = sizeof(serverAddr);
     int connectReturn = connect(sockfd, (struct sockaddr*)&serverAddr, serverAddrLength);
     if(errorIfValueLessThan_0(connectReturn, "Failed to connect") != -1)
     cout << "- connect successful -\n" <<"server IP is "<<inet_ntoa(serverAddr.sin_addr)<<" / "<<SERV_PORT<<endl<<endl;; // 不能输出自动识别的ip;
