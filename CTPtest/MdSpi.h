@@ -2,17 +2,39 @@
 #include <iostream>
 
 
-class MdSpi : public CThostFtdcMdApi{
+class MdSpi : public CThostFtdcMdSpi{
 public:
     
     // print
     static void printMsg(const char* msg);
     // 客户端和交易后台connect时调用（未登录）
-    void OnFrondConnected();
+    void OnFrontConnected();
+
+    // void Release();
+    // void Init();
+    // int Join();
+    // const char* GetTradingDay();
+    // void RegisterFront(char* pszFrontAddress);
+    // void RegisterNameServer(char* pszNsAddress);
+    // void RegisterFensUserInfo(CThostFtdcFensUserInfoField* pFensUserInfo);
+    // void RegisterSpi(CThostFtdcMdSpi* pSpi);
+    // int SubscribeMarketData(char* ppInstrumentID[], int nCount);
+    // int UnSubscribeMarketData(char* ppInstrumentID[], int nCount);
+    // int SubscribeForQuoteRsp(char* ppInstrumentID[], int nCount);
+    // int UnSubscribeForQuoteRsp(char* ppInstrumentID[], int nCount);
+    // int ReqUserLogin(CThostFtdcReqUserLoginField* pReqUserLoginField, int nRequestID);
+    // int ReqUserLogout(CThostFtdcUserLogoutField* pUserLogout, int nRequestID);
+    // int ReqQryMulticastInstrument(CThostFtdcQryMulticastInstrumentField* pQryMulticastInstrument, int nRequestID);
+private:
 };
 
 ////////////// 实现  //////////////
 
 void MdSpi::printMsg(const char *msg){std::cout << msg << "\n";}
 
-void MdSpi::OnFrondConnected(){printMsg("已连接交易后台");}
+void MdSpi::OnFrontConnected(){printMsg("已连接交易后台");}
+
+// void MdSpi::Release()
+// {
+//     // Add your code here
+// }
