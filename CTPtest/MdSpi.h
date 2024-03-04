@@ -1,4 +1,7 @@
-#include "ThostFtdcMdApi.h"
+// MdSpi.h
+
+#include "./CTP_API/TradeApi/ThostFtdcMdApi.h"
+// #include "ThostFtdcMdApi.h"
 #include <iostream>
 
 
@@ -33,8 +36,3 @@ private:
 void MdSpi::printMsg(const char *msg){std::cout << msg << "\n";}
 
 void MdSpi::OnFrontConnected(){printMsg("已连接交易后台");}
-
-// void MdSpi::Release()
-// {
-//     // Add your code here
-// }
