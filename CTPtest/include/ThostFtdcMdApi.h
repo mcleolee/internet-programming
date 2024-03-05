@@ -58,7 +58,7 @@ public:
 	///错误应答
 	virtual void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
 
-	///订阅行情应答
+	///订阅行情应答 -
 	virtual void OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
 
 	///取消订阅行情应答

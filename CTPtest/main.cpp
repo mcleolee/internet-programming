@@ -1,8 +1,4 @@
 // // main.cpp
-// #include "./include/ThostFtdcMdApi.h"
-// #include "./CTP_API/TradeApi/ThostFtdcTraderApi.h"
-// #include "./CTP_API/TradeApi/ThostFtdcUserApiDataType.h"
-// #include "./CTP_API/TradeApi/ThostFtdcUserApiStruct.h"
 
 #include "ThostFtdcMdApi.h"
 #include "ThostFtdcTraderApi.h"
