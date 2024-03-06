@@ -4,6 +4,7 @@
 // #include "ThostFtdcMdApi.h"
 #include <iostream>
 #include <cstring>
+#include <fstream>
 
 // NOT SAFE
 #define INVESTORID "223264" // do login function 
